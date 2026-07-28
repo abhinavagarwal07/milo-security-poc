@@ -32,3 +32,58 @@ expected outcome for this build: survive
     t+48s server=[running oom=false exit=0] containerMem=[333.8MiB / 550MiB] pinnedDirect=0.00MiB
     t+54s server=[running oom=false exit=0] containerMem=[337.8MiB / 550MiB] pinnedDirect=0.00MiB
     t+60s server=[running oom=false exit=0] containerMem=[348.3MiB / 550MiB] pinnedDirect=0.00MiB
+    t+66s server=[running oom=false exit=0] containerMem=[348MiB / 550MiB] pinnedDirect=0.00MiB
+    t+72s server=[running oom=false exit=0] containerMem=[332.3MiB / 550MiB] pinnedDirect=0.00MiB
+    t+78s server=[running oom=false exit=0] containerMem=[340.3MiB / 550MiB] pinnedDirect=0.00MiB
+    t+84s server=[running oom=false exit=0] containerMem=[340.5MiB / 550MiB] pinnedDirect=3.81MiB
+    t+90s server=[running oom=false exit=0] containerMem=[344.4MiB / 550MiB] pinnedDirect=0.00MiB
+    t+96s server=[running oom=false exit=0] containerMem=[336.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+102s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+108s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+114s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+120s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+126s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+132s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+138s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+144s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+150s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+156s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+162s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+168s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+174s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+180s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+186s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+192s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+198s server=[running oom=false exit=0] containerMem=[328.1MiB / 550MiB] pinnedDirect=0.00MiB
+
+[4/8] Final server state: status=running OOMKilled=false ExitCode=0
+
+[5/8] Stop attacker(s); collect exact accepted-connection / byte-count evidence
+    attacker[1]: acceptedConns=495 throttledConns=0 bytesSent=2076148800
+    TOTAL across 1 source IP(s): acceptedConns=495 throttledConns=0 bytesSent=2076148800 (1979.97 MiB)
+    identical-sequence check: required acceptedConns >= 6 (from the paired run)
+
+[6/8] Legitimate client AFTER the attack (server is dead, or still alive if it survived)
+    [5] legit AFTER attack : LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://127.0.0.1:12686/milo state=0 elapsedMs=2105
+
+[7/8] Co-located unrelated workload (heartbeat thread, no Netty/OPC UA dependency)
+    heartbeat sample 1 : HEARTBEAT seq=387 ts=1785241400402
+    heartbeat sample 2 : HEARTBEAT seq=389 ts=1785241402411
+    co-located workload verdict : RUNNING (still incrementing -- process healthy)
+
+[8/8] Recovery: restart server, only restart recovers
+memory-leak-net
+============================================================
+MACHINE-CHECKED VERDICT[fixed-1.1.5]: PASS (exit 0)
+============================================================
+============================================================
+SCREENSHOT SUMMARY -- fixed-1.1.5 (single, 1 source IP)
+============================================================
+Legitimate client before attack: OK
+Attacker: single source IP, 495 connections, 1979.97 MiB sent
+Server direct memory: 0 -> 0.00MiB (cap 512m; container limit 550m is the binding constraint)
+Container: OOMKilled=false ExitCode=0 (survived full 180s attack)
+Legitimate client after attack: OK
+Co-located workload: RUNNING (process healthy)
+============================================================
+transcript: /Users/abhinavagarwal/Documents/work/milo-security-poc/uasc-preauth-memory-leak/poc/../evidence/scenarioB-fixed-1.1.5-single-ip.log

