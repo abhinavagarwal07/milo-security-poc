@@ -1,0 +1,82 @@
+# the mixed-batch bypass evidence -- captured_at_utc=2026-07-28T11:59:52Z
+# label=row7-fixed-control-victim-unaffected-1.1.5.log :: Row 7: identical live mixed-batch attack against fixed Milo 1.1.5 -- clean CallResponse denying stopSensorFeed, and the independent third LegitClient session (separate process) sees its stream continue uninterrupted, proving the fix protects third parties too
+# environment: see /Users/abhinavagarwal/Documents/work/milo-security-poc/call-mixed-batch-authz-bypass/evidence/environment.log for exact dependency versions, artifact
+#              hashes, JDK/Maven/OS info shared by this entire run
+# ------------------------------------------------------------------
+$ java -cp /tmp/call-batch-poc-fixed-63183.jar callbatch.Attacker opc.tcp://localhost:18723/milo mixed-batch-stopfeed
+
+CLIENT phase=mixed-batch-stopfeed url=opc.tcp://localhost:18723/milo identity=anonymous
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+CLIENT connected (anonymous, SecurityPolicy.None)
+CLIENT discovered nodes via Browse: Device=NodeId{ns=3, id=Plant/Device} readStatus=NodeId{ns=3, id=Plant/Device/readStatus} resetDevice=NodeId{ns=3, id=Plant/Device/resetDevice} SensorFeed=NodeId{ns=3, id=Plant/SensorFeed} stopSensorFeed=NodeId{ns=3, id=Plant/SensorFeed/stopSensorFeed}
+ATTACK (mixed batch, SensorFeed): anonymous attacker sends ONE CallRequest [readStatus (allowed), stopSensorFeed (DENIED)]
+CLIENT batch call returned a CallResponse (WIRE: not a timeout):
+  statusCode=StatusCode[name=Good, value=0x00000000, quality=good]
+  statusCode=StatusCode[name=Bad_UserAccessDenied, value=0x801F0000, quality=bad]
+CLIENT_DONE phase=mixed-batch-stopfeed
+
+server-side counters (ground truth): readStatus=1 resetDevice=0 deviceReset=false stopSensorFeed=0 feedRunning=true
+LegitClient baseline (pre-attack) : goodTicks=16 badTicks=0
+LegitClient final    (post-attack): goodTicks=48 badTicks=0
+
+NOTE ON THE WIRE: reported exactly as observed above. The LegitClient transcript below,
+captured by a wholly separate JVM process with its own OPC UA session, is the
+independent, third-party evidence of what actually happened server-side.
+
+--- LegitClient (separate process) full transcript ---
+LEGIT_CLIENT starting url=opc.tcp://localhost:18723/milo durationSeconds=18 identity=anonymous (independent third victim session)
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+LEGIT_CLIENT connected (anonymous, SecurityPolicy.None)
+LEGIT_CLIENT discovered Plant/SensorFeed/Value=NodeId{ns=3, id=Plant/SensorFeed/Value}
+LEGIT_TICK ts=1785240104370 value=17.557947817044607 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=1 badTicks=0
+LEGIT_TICK ts=1785240104575 value=17.134567608275635 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=2 badTicks=0
+LEGIT_TICK ts=1785240104775 value=16.747406160350792 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=3 badTicks=0
+LEGIT_TICK ts=1785240104977 value=16.379366392092525 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=4 badTicks=0
+LEGIT_TICK ts=1785240105178 value=16.057804678037133 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=5 badTicks=0
+LEGIT_TICK ts=1785240105384 value=15.76513033227587 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=6 badTicks=0
+LEGIT_TICK ts=1785240105587 value=15.520912585744632 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=7 badTicks=0
+LEGIT_TICK ts=1785240105795 value=15.171965886133378 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=8 badTicks=0
+LEGIT_TICK ts=1785240105989 value=15.062303155925512 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=9 badTicks=0
+LEGIT_TICK ts=1785240106197 value=15.00915663840905 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=10 badTicks=0
+LEGIT_TICK ts=1785240106403 value=15.003894375858064 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=11 badTicks=0
+LEGIT_TICK ts=1785240106602 value=15.047514492522167 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=12 badTicks=0
+LEGIT_TICK ts=1785240106809 value=15.142089707950685 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=13 badTicks=0
+LEGIT_TICK ts=1785240107013 value=15.285345224977974 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=14 badTicks=0
+LEGIT_TICK ts=1785240107214 value=15.470869961479911 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=15 badTicks=0
+LEGIT_TICK ts=1785240107419 value=15.708813492045582 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=16 badTicks=0
+LEGIT_TICK ts=1785240107626 value=15.983470688874608 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=17 badTicks=0
+LEGIT_TICK ts=1785240107827 value=16.297461729628036 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=18 badTicks=0
+LEGIT_TICK ts=1785240108028 value=16.65328011885269 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=19 badTicks=0
+LEGIT_TICK ts=1785240108232 value=17.038842738312148 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=20 badTicks=0
+LEGIT_TICK ts=1785240108438 value=17.460154398831495 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=21 badTicks=0
+LEGIT_TICK ts=1785240108641 value=17.9096241285837 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=22 badTicks=0
+LEGIT_TICK ts=1785240108842 value=18.36878953126955 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=23 badTicks=0
+LEGIT_TICK ts=1785240109048 value=18.851227487403534 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=24 badTicks=0
+LEGIT_TICK ts=1785240109259 value=19.337824426707257 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=25 badTicks=0
+LEGIT_TICK ts=1785240109475 value=19.84339852207474 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=26 badTicks=0
+LEGIT_TICK ts=1785240109671 value=20.34310318756657 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=27 badTicks=0
+LEGIT_TICK ts=1785240109872 value=20.839379677789747 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=28 badTicks=0
+LEGIT_TICK ts=1785240110076 value=21.32003689197004 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=29 badTicks=0
+LEGIT_TICK ts=1785240110280 value=21.7972322515382 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=30 badTicks=0
+LEGIT_TICK ts=1785240110490 value=22.258520934058037 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=31 badTicks=0
+LEGIT_TICK ts=1785240110700 value=22.70940912735948 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=32 badTicks=0
+LEGIT_TICK ts=1785240110888 value=23.089914986233808 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=33 badTicks=0
+LEGIT_TICK ts=1785240111091 value=23.47591573383921 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=34 badTicks=0
+LEGIT_TICK ts=1785240111294 value=23.812520193437688 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=35 badTicks=0
+LEGIT_TICK ts=1785240111512 value=24.119262259507963 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=36 badTicks=0
+LEGIT_TICK ts=1785240111707 value=24.38281689945509 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=37 badTicks=0
+LEGIT_TICK ts=1785240111922 value=24.600184534342112 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=38 badTicks=0
+LEGIT_TICK ts=1785240112129 value=24.77129972603084 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=39 badTicks=0
+LEGIT_TICK ts=1785240112334 value=24.895689612312125 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=40 badTicks=0
+LEGIT_TICK ts=1785240112539 value=24.974709515298166 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=41 badTicks=0
+LEGIT_TICK ts=1785240112744 value=24.99997563642814 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=42 badTicks=0
+LEGIT_TICK ts=1785240112948 value=24.9770359652794 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=43 badTicks=0
+LEGIT_TICK ts=1785240113152 value=24.904385595576443 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=44 badTicks=0
+LEGIT_TICK ts=1785240113359 value=24.77980681948138 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=45 badTicks=0
+LEGIT_TICK ts=1785240113554 value=24.609425833529777 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=46 badTicks=0
+LEGIT_TICK ts=1785240113759 value=24.394182236940953 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=47 badTicks=0
+LEGIT_TICK ts=1785240113965 value=24.132658784695334 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=48 badTicks=0

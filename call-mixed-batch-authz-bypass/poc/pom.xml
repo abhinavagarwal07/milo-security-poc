@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    the mixed-batch bypass proof of concept.
+
+    Root cause: DefaultMethodServiceSet.call() (opc-ua-sdk/sdk-server/.../
+    servicesets/impl/DefaultMethodServiceSet.java) computes a per-method access-result map via
+    AccessController.checkCallAccess(), then partitions the request with GroupMapCollate.
+    Inside the "allowed" branch it dispatches:
+
+        server.getAddressSpaceManager().call(callContext, methodsToCall)
+
+    passing the FULL, UNFILTERED original CallMethodRequest list, including methods that were
+    just denied by the very access-result map the branch is conditioned on, instead of `group`,
+    the authorized-only subset GroupMapCollate computed for that partition. Any CallRequest that
+    batches at least one authorized method alongside one or more denied methods causes the denied
+    method(s) to execute with real side effects. Fixed in Milo 1.1.5, commit
+    59b50bed094de0d18a130a48f3527254dc76105d ("Restrict Call dispatch to authorized methods",
+    PR #1802).
+
+    Standalone: this module depends only on RELEASED Eclipse Milo artifacts from Maven Central
+    (or a local mirror/cache) and does not require the Milo source tree. The same source is
+    built twice, once against the vulnerable 1.1.4 and once against the fixed 1.1.5, purely
+    by overriding milo.version; see run.sh.
+  -->
+
+  <groupId>poc.callbatch</groupId>
+  <artifactId>call-mixed-batch-authz-bypass-poc</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Vulnerable by default. Override with -Dmilo.version=1.1.5 for the fixed-build control. -->
+    <milo.version>1.1.4</milo.version>
+  </properties>
+
+  <dependencies>
+    <!-- Brings org.eclipse.milo.examples.server.ExampleServer, a public SDK entry point
+         (not an internal/test-only class), plus sdk-server, transport, stack, bouncycastle,
+         slf4j-simple transitively. -->
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-server-examples</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <!-- Real, unmodified OPC UA client SDK used by the attacker. -->
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-sdk-client</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>call-batch-poc</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <transformers>
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>module-info.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

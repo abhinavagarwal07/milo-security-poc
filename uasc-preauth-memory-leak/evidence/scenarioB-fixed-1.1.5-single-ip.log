@@ -1,0 +1,34 @@
+============================================================
+UASC pre-authentication memory-leak PoC -- Scenario B  label=fixed-1.1.5 image=memory-leak-app:1.1.5 mode=single  2026-07-28T12:16:49Z
+============================================================
+environment: Darwin 24.6.0 / docker Docker version 28.3.3, build 980b856
+container --memory=550m --memory-swap=550m  -Xmx128m -XX:MaxDirectMemorySize=512m
+(the JVM's own direct cap is set deliberately high so it never binds; the cgroup
+ limit is the actual constraint -- this is the common containerized deployment shape)
+attacker: mode=single sourceIPs=1 chunksPerConn=64 chunkSize=65535
+          interConnSleep=0.30s durationSec=180 (identical across vulnerable/fixed runs)
+expected outcome for this build: survive
+9ce7474ee577f1b5643ada4ccf91686856f5e7199a318e3d6ac5687c30004fd6
+
+[1/8] Start server (container-memory-bounded, no protective direct cap, heartbeat active)
+990694df8bb85ba6b48a47af52f7f6b0707a46db731f0480d404e63cc02e851a
+    [1] legit BEFORE attack : LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://127.0.0.1:12686/milo state=0 elapsedMs=2924
+    idle RSS            : 189.2MiB / 550MiB
+    co-located heartbeat BEFORE attack : HEARTBEAT seq=8 ts=1785241019923
+
+[2/8] Launch attacker(s): mode=single, 1 source IP(s), identical chunk pattern
+3d078b37c9dae9b977fe53fba143c8752f6736175dc54f6b66d0d0d538144ee0
+    1 attacker container(s) started against opc.tcp://server:12686/milo (non-loopback bridge peer,
+    so RateLimitingHandler is NOT exempted -- it is genuinely active throughout)
+
+[3/8] Watch server state for up to 180s (direct memory + container RSS + heartbeat)
+    t+6s server=[running oom=false exit=0] containerMem=[322.1MiB / 550MiB] pinnedDirect=0.00MiB
+    t+12s server=[running oom=false exit=0] containerMem=[342.7MiB / 550MiB] pinnedDirect=0.00MiB
+    t+18s server=[running oom=false exit=0] containerMem=[342.9MiB / 550MiB] pinnedDirect=0.00MiB
+    t+24s server=[running oom=false exit=0] containerMem=[346.8MiB / 550MiB] pinnedDirect=7.88MiB
+    t+30s server=[running oom=false exit=0] containerMem=[347MiB / 550MiB] pinnedDirect=0.00MiB
+    t+36s server=[running oom=false exit=0] containerMem=[337.4MiB / 550MiB] pinnedDirect=0.00MiB
+    t+42s server=[running oom=false exit=0] containerMem=[341.3MiB / 550MiB] pinnedDirect=0.00MiB
+    t+48s server=[running oom=false exit=0] containerMem=[333.8MiB / 550MiB] pinnedDirect=0.00MiB
+    t+54s server=[running oom=false exit=0] containerMem=[337.8MiB / 550MiB] pinnedDirect=0.00MiB
+    t+60s server=[running oom=false exit=0] containerMem=[348.3MiB / 550MiB] pinnedDirect=0.00MiB

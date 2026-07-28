@@ -1,0 +1,12 @@
+# the RoleMapper-drop defect evidence -- exact dependency artifact identities -- captured 2026-07-28T12:00:06Z UTC
+# sha256 of each released Eclipse Milo jar this PoC was built against, resolved from
+# the local Maven repository (~/.m2), one row per (artifact, version).
+
+9205ac17fa5454f0974276c6d84939dae9342065a753c21f7f41f4d4a1f32c51  milo-sdk-server:1.1.4
+8ac8054a62eb99bd25b7cbdb2dda7144ccb50c4ffc08b12f4f6b9d7cac872f5f  milo-sdk-client:1.1.4
+e099d52e53c3d189f6274366badf298e06efb6cb3715380f246f60e1bc94d488  milo-stack-core:1.1.4
+6b97d11714a0b5cc90c2f18de9169417aad9803fd30f4673b299c8368bea39d3  milo-transport:1.1.4
+1f24ced03e6d517c4e3d6da043f5bf17e45ef6efcc57505864759fc5ced63a82  milo-sdk-server:1.1.5
+6a4b22afa5c92ce8e921623d5a32f0e9989527b0c3bd8db6fb5866036c248010  milo-sdk-client:1.1.5
+6ee0a0f314c463f6b97dd06e8b0650d8393ebb0b28328b0951c763d231819c6e  milo-stack-core:1.1.5
+9d330c5904bc4a8608ce4632613f27cf409963b1cc98f3fb457c7bc16a4e14f6  milo-transport:1.1.5

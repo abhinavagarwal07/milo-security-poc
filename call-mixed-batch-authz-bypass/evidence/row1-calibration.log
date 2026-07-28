@@ -1,0 +1,20 @@
+# the mixed-batch bypass evidence -- captured_at_utc=2026-07-28T11:59:52Z
+# label=row1-calibration.log :: Row 1: authenticated Admin calls resetDevice() directly -- establishes the method's real, intended effect, independent of the bug
+# environment: see /Users/abhinavagarwal/Documents/work/milo-security-poc/call-mixed-batch-authz-bypass/evidence/environment.log for exact dependency versions, artifact
+#              hashes, JDK/Maven/OS info shared by this entire run
+# ------------------------------------------------------------------
+$ java -cp target/call-batch-poc.jar callbatch.Attacker opc.tcp://localhost:18723/milo calibration
+
+CLIENT phase=calibration url=opc.tcp://localhost:18723/milo identity=admin/UserName
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+[milo-shared-thread-pool-0] WARN org.eclipse.milo.opcua.stack.core.security.CertificateValidator$InsecureCertificateValidator - Skipping validation for certificate: C=US, ST=CA, L=Folsom, OU=dev, O=digitalpetri, CN=Eclipse Milo Example Server
+CLIENT connected (AUTHENTICATED as admin, SecurityPolicy.None)
+CLIENT discovered nodes via Browse: Device=NodeId{ns=3, id=Plant/Device} readStatus=NodeId{ns=3, id=Plant/Device/readStatus} resetDevice=NodeId{ns=3, id=Plant/Device/resetDevice} SensorFeed=NodeId{ns=3, id=Plant/SensorFeed} stopSensorFeed=NodeId{ns=3, id=Plant/SensorFeed/stopSensorFeed}
+CALIBRATION: AUTHENTICATED Admin calls resetDevice() DIRECTLY (expect Good -- establishes the method's real, intended effect)
+CLIENT call result: statusCode=StatusCode[name=Good, value=0x00000000, quality=good]
+CLIENT_DONE phase=calibration
+
+server-side counters (ground truth): readStatus=0 resetDevice=1 deviceReset=true stopSensorFeed=0 feedRunning=true
+resetDevice invocation count: 1 (expect 1 -- a real, authorized invocation)

@@ -1,0 +1,19 @@
+# the mixed-batch bypass evidence -- captured_at_utc=2026-07-28T11:59:52Z
+# label=row5d-control-stopfeed-denied-alone.log :: Row 5d: anonymous attacker calls stopSensorFeed() ALONE -- Bad_UserAccessDenied, feed keeps ticking, zero server-side effect
+# environment: see /Users/abhinavagarwal/Documents/work/milo-security-poc/call-mixed-batch-authz-bypass/evidence/environment.log for exact dependency versions, artifact
+#              hashes, JDK/Maven/OS info shared by this entire run
+# ------------------------------------------------------------------
+$ java -cp /tmp/call-batch-poc-fixed-63183.jar callbatch.Attacker opc.tcp://localhost:18723/milo control-stopfeed-denied
+
+CLIENT phase=control-stopfeed-denied url=opc.tcp://localhost:18723/milo identity=anonymous
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+CLIENT connected (anonymous, SecurityPolicy.None)
+CLIENT discovered nodes via Browse: Device=NodeId{ns=3, id=Plant/Device} readStatus=NodeId{ns=3, id=Plant/Device/readStatus} resetDevice=NodeId{ns=3, id=Plant/Device/resetDevice} SensorFeed=NodeId{ns=3, id=Plant/SensorFeed} stopSensorFeed=NodeId{ns=3, id=Plant/SensorFeed/stopSensorFeed}
+CONTROL (denied-alone, SensorFeed): anonymous attacker calls stopSensorFeed() ALONE (expect Bad_UserAccessDenied, feed keeps ticking)
+CLIENT call result: statusCode=StatusCode[name=Bad_UserAccessDenied, value=0x801F0000, quality=bad]
+CLIENT_DONE phase=control-stopfeed-denied
+
+server-side counters: readStatus=0 resetDevice=0 deviceReset=false stopSensorFeed=0 feedRunning=true
+stopSensorFeed invocation count: 0 (must be 0 -- denied alone has zero effect)

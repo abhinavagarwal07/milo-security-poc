@@ -1,0 +1,35 @@
+# libIEC61850 source fetched by setup.sh
+.libiec61850/
+build_poc_default/
+build_poc_nsp/
+build_poc_asan/
+build_nosp/
+build_docker/
+build_rce/
+build_vuln/
+
+# Build artifacts — everything here is rebuilt from source via the build/run scripts
+bin/
+build/
+build_asan/
+build_patched/
+*.o
+*.a
+*.so
+*.dSYM/
+poc_receiver_0014
+poc_receiver_0014_asan
+poc_receiver_0014_patched
+poc_receiver_0014_v2_asan
+vuln_server
+exploit_client
+safe_server
+__pycache__/
+*.pyc
+.DS_Store
+target/
+target-versions/
+*.class
+.deps_classpath*
+.DS_Store
+dependency-reduced-pom.xml

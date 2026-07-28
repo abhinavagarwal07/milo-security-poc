@@ -1,0 +1,21 @@
+[main] INFO org.eclipse.milo.examples.server.ExampleServer - security dir: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security
+[main] INFO org.eclipse.milo.examples.server.ExampleServer - security pki dir: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/pki
+[main] INFO org.eclipse.milo.examples.server.KeyStoreLoader - Loading KeyStore at /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/example-server.pfx
+[main] INFO org.eclipse.milo.opcua.stack.core.security.KeyStoreCertificateStore - Loading KeyStore at /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/example-server.pfx
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Server SDK version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+POC_SERVER_READY pid=63920 port=18723 countersFile=/tmp/call-batch-side-effects-l1-63183.txt
+[milo-shared-thread-pool-1] INFO callbatch.PocNamespace - SIDE_EFFECT stopSensorFeed invoked count=1 feedRunning=false

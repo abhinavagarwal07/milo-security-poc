@@ -1,0 +1,95 @@
+============================================================
+UASC pre-authentication memory-leak PoC -- Scenario A  label=fixed-1.1.5 jar=victim-server/target-versions/victim-server-1.1.5.jar  2026-07-28T12:14:26Z
+============================================================
+host non-loopback IP (attacker target, proves RateLimitingHandler is active): 10.0.0.196
+java: openjdk version "21.0.8" 2025-07-15 LTS
+
+[1/9] Start victim server (-Xmx256m -XX:MaxDirectMemorySize=64m, bound 0.0.0.0:12686)
+    server pid (host) = 72872
+    server ready, in-process pid=72872
+
+[2/9] BEFORE attack -- baseline memory + legit connectivity
+    pinnedDirect BEFORE = 0.00 MiB (0 bytes)
+    baseline, pre-attack -> LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=4314
+    LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=4314
+
+[3/9] ATTACK -- raw-socket UASC OPN 'C'-chunk leak against opc.tcp://10.0.0.196:12686/milo (non-loopback)
+    attacker started pid=72931 (detached, ~3 conns/s while rate limiter active); ramping...
+    t+5s pinnedDirect=0.00 MiB
+    t+10s pinnedDirect=7.88 MiB
+    t+15s pinnedDirect=0.00 MiB
+    t+20s pinnedDirect=7.88 MiB
+    t+25s pinnedDirect=7.69 MiB
+    t+30s pinnedDirect=7.62 MiB
+    t+35s pinnedDirect=7.25 MiB
+    t+40s pinnedDirect=0.00 MiB
+    t+45s pinnedDirect=0.00 MiB
+    t+50s pinnedDirect=0.00 MiB
+    t+55s pinnedDirect=0.00 MiB
+    t+60s pinnedDirect=0.00 MiB
+    NOTE: did not reach 45 MiB in 60s; proceeding with whatever level was reached
+
+[4/9] IMPACT (DURING attack) -- 3 concurrent legit probes under saturation
+    DURING attack, probe #1 -> LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=4001
+    probe#1: LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=4001
+    DURING attack, probe #2 -> LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3276
+    probe#2: LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3276
+    DURING attack, probe #3 -> LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=4193
+    probe#3: LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=4193
+    pinnedDirect PEAK = 7.88 MiB (8257536 bytes)
+
+    --- non-loopback / rate-limiter-active proof (server-side logs) ---
+    remote=/10.0.0.196:60237
+    remote=/10.0.0.196:60238
+    remote=/10.0.0.196:60240
+    remote=/10.0.0.196:60241
+    remote=/10.0.0.196:60242
+    RateLimitingHandler Accepting/Rejecting lines:
+      05:14:32.852 [milo-netty-event-loop-5] DEBUG org.eclipse.milo.opcua.stack.transport.server.tcp.RateLimitingHandler - Accepting connection from /10.0.0.196:60242. window=1000ms, attemptsInWindow=3, connectionsTotal=1, connectionsFromAddress=1
+      05:14:33.219 [milo-netty-event-loop-6] DEBUG org.eclipse.milo.opcua.stack.transport.server.tcp.RateLimitingHandler - Accepting connection from /10.0.0.196:60243. window=1000ms, attemptsInWindow=3, connectionsTotal=0, connectionsFromAddress=0
+    server-side 'Rejecting connection' count = 0
+    genuine direct-memory OutOfMemoryError occurrences = 0
+    sample verbatim OOME from server:
+
+[5/9] Force GC (jcmd GC.run) -- prove leaked direct memory is NOT reclaimable
+    pinnedDirect just BEFORE forced GC = 0.00 MiB
+72872:
+Command executed successfully
+    pinnedDirect AFTER forced GC          = 7.38 MiB
+
+[6/9] Stop attacker; collect its stats
+    attacker: leakingConns=219 throttledConns=0 bytesSent=918538560 (875.99 MiB)
+
+[7/9] Legit client AFTER attacker stopped (server still saturated)
+    post-attack, attacker stopped -> LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3918
+    LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3918
+
+[8/9] RECOVERY -- restart server, prove only restart recovers the leaked memory
+    server restarted, pinnedDirect=0.00 MiB
+    post-restart -> LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3353
+    LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3353
+
+[9/9] Teardown
+============================================================
+SUMMARY -- Scenario A (fixed-1.1.5)
+============================================================
+attacker target                 : opc.tcp://10.0.0.196:12686/milo (non-loopback host IP)
+leaking (accepted) attacker conns: 219   throttled: 0 (rate limiter active)
+server-side rejections           : 0
+pinnedDirect BEFORE              : 0.00 MiB
+pinnedDirect PEAK (during attack) : 7.88 MiB  (cap 64 MiB)
+pinnedDirect AFTER forced GC      : 7.38 MiB  (unchanged from peak = GC reclaimed nothing)
+approx MiB leaked per accepted conn: 0.036
+genuine direct-memory OOME events: 0
+legit BEFORE attack               : LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=4314
+legit DURING attack (concurrent)  : 3 SUCCESS / 0 FAILURE (of 3 probes)
+legit AFTER attacker stopped      : LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3918
+legit AFTER restart               : LEGIT_CLIENT_RESULT=SUCCESS url=opc.tcp://10.0.0.196:12686/milo state=0 elapsedMs=3353
+pinnedDirect AFTER restart        : 0.00 MiB (back to baseline -- proves only restart recovers)
+Scenario A remote A:H verdict     : NOT demonstrated (server degraded but legit clients still served)
+============================================================
+transcript: /Users/abhinavagarwal/Documents/work/milo-security-poc/uasc-preauth-memory-leak/poc/../evidence/scenarioA-fixed-1.1.5.log
+raw server log (attack phase): /tmp/memory-leak-scenarioA-fixed-1.1.5-server.log.post-restart.pre-restart
+raw server log (post-restart) : /tmp/memory-leak-scenarioA-fixed-1.1.5-server.log.post-restart
+raw attacker log: /tmp/memory-leak-scenarioA-fixed-1.1.5-attacker.log
+machine-checked verdict: PASS (exit 0)

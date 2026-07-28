@@ -1,0 +1,33 @@
+[main] INFO org.eclipse.milo.examples.server.ExampleServer - security dir: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security
+[main] INFO org.eclipse.milo.examples.server.ExampleServer - security pki dir: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/pki
+[main] INFO org.eclipse.milo.examples.server.KeyStoreLoader - Loading KeyStore at /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/example-server.pfx
+[main] INFO org.eclipse.milo.opcua.stack.core.security.KeyStoreCertificateStore - Loading KeyStore at /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/example-server.pfx
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Server SDK version: dev
+[bogus-event-poster] ERROR org.eclipse.milo.examples.server.ExampleNamespace - Error creating EventNode: Cannot invoke "org.eclipse.milo.opcua.sdk.core.nodes.ObjectTypeNode.getNodeId()" because "objectTypeNode" is null
+java.lang.NullPointerException: Cannot invoke "org.eclipse.milo.opcua.sdk.core.nodes.ObjectTypeNode.getNodeId()" because "objectTypeNode" is null
+	at org.eclipse.milo.opcua.sdk.server.nodes.factories.NodeFactory.lambda$notifyInstantiationCallback$4(NodeFactory.java:312)
+	at org.eclipse.milo.opcua.stack.core.util.Tree.traverse(Tree.java:151)
+	at org.eclipse.milo.opcua.stack.core.util.Tree.traverseWithParent(Tree.java:100)
+	at org.eclipse.milo.opcua.sdk.server.nodes.factories.NodeFactory.notifyInstantiationCallback(NodeFactory.java:305)
+	at org.eclipse.milo.opcua.sdk.server.nodes.factories.NodeFactory.createNodeTree(NodeFactory.java:298)
+	at org.eclipse.milo.opcua.sdk.server.nodes.factories.NodeFactory.createNode(NodeFactory.java:88)
+	at org.eclipse.milo.opcua.sdk.server.nodes.factories.EventFactory.createEvent(EventFactory.java:76)
+	at org.eclipse.milo.examples.server.ExampleNamespace.lambda$startBogusEventNotifier$0(ExampleNamespace.java:196)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+POC_SERVER_READY pid=63833 port=18723 countersFile=/tmp/call-batch-side-effects-fixed-63183.txt
+[milo-shared-thread-pool-2] INFO callbatch.PocNamespace - SIDE_EFFECT readStatus invoked count=1
+[milo-shared-thread-pool-1] INFO callbatch.PocNamespace - SIDE_EFFECT readStatus invoked count=2

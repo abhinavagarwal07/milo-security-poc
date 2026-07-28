@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    the RoleMapper-drop defect proof of concept.
+
+    Root cause: OpcUaServerConfig.copy() (opc-ua-sdk/sdk-server/.../OpcUaServerConfig.java)
+    never carried the source config's RoleMapper into the builder it returns, so any server
+    whose running config is built via copy(), rather than the builder directly, silently
+    loses RBAC. Milo's DefaultAccessController treats "no RoleMapper" as "no roles to check
+    against", which for RolePermissions-gated operations (Browse, Call, RolePermissions/
+    Historizing attribute reads, AddNodes/DeleteNodes) means every identity, anonymous
+    included, is granted access. Fixed in Milo 1.1.5, commit d51f03e9a ("Preserve role
+    mappings when copying server config", PR #1801).
+
+    Standalone: this module depends only on RELEASED Eclipse Milo artifacts from Maven
+    Central (or a local mirror/cache) and does not require the Milo source tree. The same
+    bytecode is built twice, once against the vulnerable 1.1.4 and once against the fixed
+    1.1.5, purely by overriding ${milo.version}; see run.sh.
+  -->
+
+  <groupId>poc.rolemapper</groupId>
+  <artifactId>serverconfig-copy-rolemapper-poc</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Vulnerable by default. Override with -Dmilo.version=1.1.5 for the fixed-build control. -->
+    <milo.version>1.1.4</milo.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-sdk-server</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-sdk-client</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-stack-core</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-transport</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.18</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>rolemapper-poc</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>module-info.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

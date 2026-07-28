@@ -1,0 +1,25 @@
+# the RoleMapper-drop defect evidence -- control 3 (c3-restored) -- captured 2026-07-28T12:00:06Z UTC
+$ java -cp target/vulnerable.jar poc.LiveClient opc.tcp://localhost:12786/poc 12
+
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+LIVE_STARTED ts=1785240059457
+LIVE_HEARTBEAT ts=1785240060462 tSec=1 notifications=1 lastGood=true lastStatus=Good lastValue=8
+LIVE_HEARTBEAT ts=1785240061472 tSec=2 notifications=2 lastGood=true lastStatus=Good lastValue=12
+LIVE_HEARTBEAT ts=1785240062478 tSec=3 notifications=3 lastGood=true lastStatus=Good lastValue=15
+LIVE_HEARTBEAT ts=1785240063481 tSec=4 notifications=5 lastGood=true lastStatus=Good lastValue=22
+LIVE_HEARTBEAT ts=1785240064483 tSec=5 notifications=5 lastGood=true lastStatus=Good lastValue=22
+LIVE_HEARTBEAT ts=1785240065486 tSec=6 notifications=6 lastGood=true lastStatus=Good lastValue=25
+LIVE_HEARTBEAT ts=1785240066505 tSec=7 notifications=7 lastGood=true lastStatus=Good lastValue=28
+LIVE_HEARTBEAT ts=1785240067511 tSec=8 notifications=8 lastGood=true lastStatus=Good lastValue=32
+LIVE_HEARTBEAT ts=1785240068515 tSec=9 notifications=9 lastGood=true lastStatus=Good lastValue=35
+LIVE_HEARTBEAT ts=1785240069516 tSec=10 notifications=10 lastGood=true lastStatus=Good lastValue=38
+LIVE_HEARTBEAT ts=1785240070516 tSec=11 notifications=11 lastGood=true lastStatus=Good lastValue=42
+LIVE_HEARTBEAT ts=1785240071521 tSec=12 notifications=12 lastGood=true lastStatus=Good lastValue=45
+LIVE_SUMMARY ts=1785240071521 totalNotifications=12 lastGood=true lastStatus=Good
+
+IMPACT_COMPARISON attack_ts=1785240063918
+  last heartbeat at/before the Call : LIVE_HEARTBEAT ts=1785240063481 tSec=4 notifications=5 lastGood=true lastStatus=Good lastValue=22
+  final heartbeat (end of stream)    : LIVE_HEARTBEAT ts=1785240071521 tSec=12 notifications=12 lastGood=true lastStatus=Good lastValue=45
+IMPACT_VERDICT CONTINUOUS (notifications 5 -> 12, finalStatus=Good)

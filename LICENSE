@@ -1,0 +1,34 @@
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+SPDX-License-Identifier: GPL-3.0-or-later
+
+Copyright (C) 2026 Abhinav Agarwal
+
+This repository contains original proof-of-concept code for vulnerabilities in
+Eclipse Milo. The harnesses, attacker clients, and vulnerable-server bootstraps
+were written for this repository against Eclipse Milo's public API; no Eclipse
+Milo source is redistributed here.
+
+Eclipse Milo itself is licensed under the Eclipse Public License 2.0 and is
+consumed only as an unmodified binary dependency resolved from Maven Central at
+build time. Nothing in this repository modifies or redistributes it. See:
+https://github.com/eclipse-milo/milo
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+The full text of the GNU General Public License version 3 is available at:
+https://www.gnu.org/licenses/gpl-3.0.txt
+
+---
+
+Additional use note (does not modify the license above): this code is published
+for security research, detection engineering, and defensive testing. Do not use
+it against systems you do not own or are not explicitly authorized to test.

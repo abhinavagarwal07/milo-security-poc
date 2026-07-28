@@ -1,0 +1,77 @@
+[main] INFO org.eclipse.milo.examples.server.ExampleServer - security dir: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security
+[main] INFO org.eclipse.milo.examples.server.ExampleServer - security pki dir: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/pki
+[main] INFO org.eclipse.milo.examples.server.KeyStoreLoader - Loading KeyStore at /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/example-server.pfx
+[main] INFO org.eclipse.milo.opcua.stack.core.security.KeyStoreCertificateStore - Loading KeyStore at /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/server/security/example-server.pfx
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Server SDK version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.22.159.140:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://10.0.0.196:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo to 0.0.0.0:18723 [None/None]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo to 0.0.0.0:18723 [Basic256Sha256/SignAndEncrypt]
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://127.0.0.1:18723/milo/discovery to 0.0.0.0:18723 [None/None]
+POC_SERVER_READY pid=63330 port=18723 countersFile=/tmp/call-batch-side-effects-vuln-63183.txt
+[milo-shared-thread-pool-0] INFO callbatch.PocNamespace - SIDE_EFFECT resetDevice invoked count=1 deviceReset=true
+[milo-shared-thread-pool-1] INFO callbatch.PocNamespace - SIDE_EFFECT readStatus invoked count=1
+[milo-shared-thread-pool-1] INFO callbatch.PocNamespace - SIDE_EFFECT resetDevice invoked count=2 deviceReset=true
+[milo-shared-thread-pool-1] ERROR org.eclipse.milo.opcua.stack.core.Stack - Uncaught Throwable on shared stack ExecutorService thread!
+java.lang.RuntimeException: result size (2) does not match pending size (1)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.lambda$groupMapCollate$2(GroupMapCollate.java:45)
+	at java.base/java.util.HashMap.forEach(HashMap.java:1421)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.groupMapCollate(GroupMapCollate.java:33)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.call(DefaultMethodServiceSet.java:78)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.onCall(DefaultMethodServiceSet.java:50)
+	at org.eclipse.milo.opcua.sdk.server.AbstractServiceHandler.lambda$addServiceSet$9(AbstractServiceHandler.java:123)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.handleServiceRequest(OpcUaServer.java:704)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.lambda$handleServiceRequest$1(OpcUaServer.java:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+[milo-shared-thread-pool-1] ERROR org.eclipse.milo.opcua.stack.core.Stack - Uncaught Exception on shared stack ExecutorService thread!
+java.lang.RuntimeException: result size (2) does not match pending size (1)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.lambda$groupMapCollate$2(GroupMapCollate.java:45)
+	at java.base/java.util.HashMap.forEach(HashMap.java:1421)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.groupMapCollate(GroupMapCollate.java:33)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.call(DefaultMethodServiceSet.java:78)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.onCall(DefaultMethodServiceSet.java:50)
+	at org.eclipse.milo.opcua.sdk.server.AbstractServiceHandler.lambda$addServiceSet$9(AbstractServiceHandler.java:123)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.handleServiceRequest(OpcUaServer.java:704)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.lambda$handleServiceRequest$1(OpcUaServer.java:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+[milo-shared-thread-pool-3] INFO callbatch.PocNamespace - SIDE_EFFECT resetDevice invoked count=3 deviceReset=true
+[milo-shared-thread-pool-3] INFO callbatch.PocNamespace - SIDE_EFFECT readStatus invoked count=2
+[milo-shared-thread-pool-3] ERROR org.eclipse.milo.opcua.stack.core.Stack - Uncaught Throwable on shared stack ExecutorService thread!
+java.lang.RuntimeException: result size (2) does not match pending size (1)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.lambda$groupMapCollate$2(GroupMapCollate.java:45)
+	at java.base/java.util.HashMap.forEach(HashMap.java:1421)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.groupMapCollate(GroupMapCollate.java:33)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.call(DefaultMethodServiceSet.java:78)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.onCall(DefaultMethodServiceSet.java:50)
+	at org.eclipse.milo.opcua.sdk.server.AbstractServiceHandler.lambda$addServiceSet$9(AbstractServiceHandler.java:123)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.handleServiceRequest(OpcUaServer.java:704)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.lambda$handleServiceRequest$1(OpcUaServer.java:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+[milo-shared-thread-pool-3] ERROR org.eclipse.milo.opcua.stack.core.Stack - Uncaught Exception on shared stack ExecutorService thread!
+java.lang.RuntimeException: result size (2) does not match pending size (1)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.lambda$groupMapCollate$2(GroupMapCollate.java:45)
+	at java.base/java.util.HashMap.forEach(HashMap.java:1421)
+	at org.eclipse.milo.opcua.sdk.core.util.GroupMapCollate.groupMapCollate(GroupMapCollate.java:33)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.call(DefaultMethodServiceSet.java:78)
+	at org.eclipse.milo.opcua.sdk.server.servicesets.impl.DefaultMethodServiceSet.onCall(DefaultMethodServiceSet.java:50)
+	at org.eclipse.milo.opcua.sdk.server.AbstractServiceHandler.lambda$addServiceSet$9(AbstractServiceHandler.java:123)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.handleServiceRequest(OpcUaServer.java:704)
+	at org.eclipse.milo.opcua.sdk.server.OpcUaServer$ServerApplicationContextImpl.lambda$handleServiceRequest$1(OpcUaServer.java:623)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)

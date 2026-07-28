@@ -1,0 +1,11 @@
+# the RoleMapper-drop defect evidence -- control 1 (c1-original) -- captured 2026-07-28T12:00:06Z UTC
+$ java -cp target/vulnerable.jar poc.AttackerClient opc.tcp://localhost:12786/poc
+
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+ATTACK_DISCOVERED objectFound=true methodFound=true counterFound=true
+ATTACK_COUNTER_BEFORE value=0
+ATTACK_CALL_RESULT ts=1785240026103 statusCode=StatusCode[name=Bad_UserAccessDenied, value=0x801F0000, quality=bad] good=false
+ATTACK_COUNTER_AFTER value=0
+ATTACK_VERDICT ENFORCED -- anonymous Call denied (StatusCode[name=Bad_UserAccessDenied, value=0x801F0000, quality=bad]), invocationCount unchanged (0 -> 0).

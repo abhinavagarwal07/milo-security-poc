@@ -1,0 +1,27 @@
+the mixed-batch bypass PoC -- environment and build provenance for this run
+captured_at_utc=2026-07-28T11:59:52Z
+
+--- java -version ---
+openjdk version "17.0.19" 2026-04-21
+OpenJDK Runtime Environment Temurin-17.0.19+10 (build 17.0.19+10)
+OpenJDK 64-Bit Server VM Temurin-17.0.19+10 (build 17.0.19+10, mixed mode, sharing)
+
+--- mvn -version ---
+Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)
+Maven home: /Users/abhinavagarwal/.local/share/mise/installs/maven/3.9.16/apache-maven-3.9.16
+Java version: 17.0.19, vendor: Eclipse Adoptium, runtime: /Users/abhinavagarwal/.local/share/mise/installs/java/temurin-17.0.19+10
+Default locale: en_US, platform encoding: UTF-8
+OS name: "mac os x", version: "15.7.3", arch: "aarch64", family: "mac"
+
+--- uname -a ---
+Darwin Abhinavs-MacBook-Air.local 24.6.0 Darwin Kernel Version 24.6.0: Wed Nov  5 21:28:03 PST 2025; root:xnu-11417.140.69.705.2~1/RELEASE_ARM64_T8122 arm64
+
+--- dependency coordinates (identical application code both builds; only milo.version differs) ---
+org.eclipse.milo:milo-server-examples:1.1.4 (vulnerable) / :1.1.5 (fixed)
+org.eclipse.milo:milo-sdk-client:1.1.4 (vulnerable) / :1.1.5 (fixed)
+
+--- built artifact sha256 (vulnerable, milo.version=1.1.4) ---
+86d85d34c2d0804c8c8078e76b31fca1a6b3212d674f825d251f5970daeb2a30  call-batch-poc-vuln.jar
+
+--- built artifact sha256 (fixed, milo.version=1.1.5) ---
+372d9ab8ab07508a160c523a1408282e21b128b8e972cb25535e3571b030ecd3  call-batch-poc-fixed.jar

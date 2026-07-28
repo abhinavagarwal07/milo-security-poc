@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    the padding oracle proof of concept.
+
+    Root cause: AbstractIdentityValidator.decryptTokenData() (opc-ua-sdk/sdk-server/.../identity/
+    AbstractIdentityValidator.java) maps every RSA-unpadding failure during ActivateSession's
+    UserNameIdentityToken decryption to Bad_SecurityChecksFailed, while structural/nonce failures
+    and wrong-password failures downstream in AbstractUsernameIdentityValidator.validateUsernameToken()
+    return different status codes (Bad_IdentityTokenInvalid / Bad_UserAccessDenied). For servers
+    that expose a Basic128Rsa15 username UserTokenPolicy (PKCS#1 v1.5 padding), this is exactly the
+    single-bit "padding valid / padding invalid" oracle Bleichenbacher's chosen-ciphertext attack
+    requires. This PoC captures one victim ActivateSession ciphertext off the wire and drives
+    real ActivateSession round-trips against a live OpcUaServer as the oracle to recover the
+    victim's plaintext password, then impersonates the victim. Fixed in Milo 1.1.5, commit
+    db59fae993a3a1bc66fffc8a2796d444b40285fb ("Close username-token padding oracle", PR #1804),
+    which normalizes all three failure paths to the same Bad_IdentityTokenInvalid status.
+
+    Standalone: this module depends only on RELEASED Eclipse Milo artifacts from Maven Central
+    (or a local mirror/cache) and does not require the Milo source tree. The same bytecode is
+    built twice: once against the vulnerable 1.1.4 and once against the fixed 1.1.5, purely
+    by overriding ${milo.version}; see run.sh.
+
+    Process isolation: this jar has five entry points (poc.ServerMain, poc.VictimMain,
+    poc.RelayMain, poc.AttackerMain, poc.VerifierMain), each launched as its own JVM by run.sh.
+    There is deliberately no single fixed Main-Class; see run.sh for the exact `java -cp`
+    invocations, which is also how to audit that the attacker process's argv never contains
+    the victim's password.
+  -->
+
+  <groupId>poc.paddingoracle</groupId>
+  <artifactId>username-token-padding-oracle-poc</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- Vulnerable by default. Override with -Dmilo.version=1.1.5 for the fixed-build control. -->
+    <milo.version>1.1.4</milo.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-sdk-server</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-sdk-client</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-stack-core</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.milo</groupId>
+      <artifactId>milo-transport</artifactId>
+      <version>${milo.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.18</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>padding-oracle-poc</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.2</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <transformers>
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                    <exclude>module-info.class</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,9 @@
+# the RoleMapper-drop defect evidence -- control 1 (c1-original) -- captured 2026-07-28T12:00:06Z UTC
+$ java -cp target/vulnerable.jar poc.PocServer original 12786
+
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Server SDK version: dev
+POC_SERVER_CONFIG mode=original roleMapperPresentOnBaseConfig=true roleMapperPresentOnRunningConfig=true (PRESERVED -- RBAC enforced on the running server)
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:12786/poc to 0.0.0.0:12786 [None/None]
+POC_SERVER_READY mode=original pid=63538 hostname=Abhinavs-MacBook-Air.local port=12786 endpointUrl=opc.tcp://Abhinavs-MacBook-Air.local:12786/poc roleMapperPresentOnRunningConfig=true

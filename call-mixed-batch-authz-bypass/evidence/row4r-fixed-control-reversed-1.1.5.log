@@ -1,0 +1,21 @@
+# the mixed-batch bypass evidence -- captured_at_utc=2026-07-28T11:59:52Z
+# label=row4r-fixed-control-reversed-1.1.5.log :: Row 4r: identical REVERSED-order mixed-batch attack against fixed Milo 1.1.5 -- resetDevice must NOT execute
+# environment: see /Users/abhinavagarwal/Documents/work/milo-security-poc/call-mixed-batch-authz-bypass/evidence/environment.log for exact dependency versions, artifact
+#              hashes, JDK/Maven/OS info shared by this entire run
+# ------------------------------------------------------------------
+$ java -cp target/call-batch-poc.jar callbatch.Attacker opc.tcp://localhost:18723/milo mixed-batch-rev   (against FIXED Milo 1.1.5)
+
+CLIENT phase=mixed-batch-rev url=opc.tcp://localhost:18723/milo identity=anonymous
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+CLIENT connected (anonymous, SecurityPolicy.None)
+CLIENT discovered nodes via Browse: Device=NodeId{ns=3, id=Plant/Device} readStatus=NodeId{ns=3, id=Plant/Device/readStatus} resetDevice=NodeId{ns=3, id=Plant/Device/resetDevice} SensorFeed=NodeId{ns=3, id=Plant/SensorFeed} stopSensorFeed=NodeId{ns=3, id=Plant/SensorFeed/stopSensorFeed}
+ATTACK (mixed batch, REVERSED order): anonymous attacker sends ONE CallRequest [resetDevice (DENIED), readStatus (allowed)]
+CLIENT batch call returned a CallResponse (WIRE: not a timeout):
+  statusCode=StatusCode[name=Bad_UserAccessDenied, value=0x801F0000, quality=bad]
+  statusCode=StatusCode[name=Good, value=0x00000000, quality=good]
+CLIENT_DONE phase=mixed-batch-rev
+
+server-side counters (ground truth): readStatus=2 resetDevice=0 deviceReset=false stopSensorFeed=0 feedRunning=true
+resetDevice invocation count: 0 (must stay at 0 -- fix holds regardless of batch order)

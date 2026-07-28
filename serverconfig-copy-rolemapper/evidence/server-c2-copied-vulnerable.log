@@ -1,0 +1,10 @@
+# the RoleMapper-drop defect evidence -- control 2 (c2-copied-vulnerable) -- captured 2026-07-28T12:00:06Z UTC
+$ java -cp target/vulnerable.jar poc.PocServer copied 12786
+
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Eclipse Milo OPC UA Server SDK version: dev
+POC_SERVER_CONFIG mode=copied roleMapperPresentOnBaseConfig=true roleMapperPresentOnRunningConfig=false (DROPPED by OpcUaServerConfig.copy() -- RBAC fails open on the running server (the RoleMapper-drop defect))
+[main] INFO org.eclipse.milo.opcua.sdk.server.OpcUaServer - Binding endpoint opc.tcp://Abhinavs-MacBook-Air.local:12786/poc to 0.0.0.0:12786 [None/None]
+POC_SERVER_READY mode=copied pid=63799 hostname=Abhinavs-MacBook-Air.local port=12786 endpointUrl=opc.tcp://Abhinavs-MacBook-Air.local:12786/poc roleMapperPresentOnRunningConfig=false
+POC_SIDE_EFFECT restartPump EXECUTED invocationCount=1 pumpWasRunning=true pumpFlowNowBad=true (the privileged method body actually ran on the server and stopped the live PumpFlow feed)

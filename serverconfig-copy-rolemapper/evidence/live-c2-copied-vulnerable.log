@@ -1,0 +1,25 @@
+# the RoleMapper-drop defect evidence -- control 2 (c2-copied-vulnerable) -- captured 2026-07-28T12:00:06Z UTC
+$ java -cp target/vulnerable.jar poc.LiveClient opc.tcp://localhost:12786/poc 12
+
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+LIVE_STARTED ts=1785240040107
+LIVE_HEARTBEAT ts=1785240041107 tSec=1 notifications=1 lastGood=true lastStatus=Good lastValue=6
+LIVE_HEARTBEAT ts=1785240042122 tSec=2 notifications=2 lastGood=true lastStatus=Good lastValue=9
+LIVE_HEARTBEAT ts=1785240043123 tSec=3 notifications=3 lastGood=true lastStatus=Good lastValue=12
+LIVE_HEARTBEAT ts=1785240044128 tSec=4 notifications=4 lastGood=true lastStatus=Good lastValue=16
+LIVE_HEARTBEAT ts=1785240045133 tSec=5 notifications=5 lastGood=true lastStatus=Good lastValue=19
+LIVE_HEARTBEAT ts=1785240046138 tSec=6 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+LIVE_HEARTBEAT ts=1785240047141 tSec=7 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+LIVE_HEARTBEAT ts=1785240048148 tSec=8 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+LIVE_HEARTBEAT ts=1785240049154 tSec=9 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+LIVE_HEARTBEAT ts=1785240050161 tSec=10 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+LIVE_HEARTBEAT ts=1785240051164 tSec=11 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+LIVE_HEARTBEAT ts=1785240052169 tSec=12 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+LIVE_SUMMARY ts=1785240052170 totalNotifications=6 lastGood=false lastStatus=Bad_0x80310000
+
+IMPACT_COMPARISON attack_ts=1785240045113
+  last heartbeat at/before the Call : LIVE_HEARTBEAT ts=1785240044128 tSec=4 notifications=4 lastGood=true lastStatus=Good lastValue=16
+  final heartbeat (end of stream)    : LIVE_HEARTBEAT ts=1785240052169 tSec=12 notifications=6 lastGood=false lastStatus=Bad_0x80310000 lastValue=0
+IMPACT_VERDICT DISRUPTED (notifications 4 -> 6, finalStatus=Bad_0x80310000)

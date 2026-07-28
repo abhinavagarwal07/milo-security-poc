@@ -1,0 +1,8 @@
+# Attacker image: pure Python raw-socket UASC attacker. No Milo dependency,
+# no OPC UA library dependency of any kind -- just the standard library.
+FROM python:3.12-slim
+
+WORKDIR /app
+COPY attacker/attacker.py /app/attacker.py
+
+ENTRYPOINT ["python3", "/app/attacker.py"]

@@ -1,0 +1,19 @@
+============================================================
+the RoleMapper-drop defect -- OpcUaServerConfig.copy() drops RoleMapper -- CAUSAL VERDICT MATRIX
+captured 2026-07-28T12:00:06Z UTC
+------------------------------------------------------------
+#  control                  milo    expected  actual    victim      pass
+1  original                 1.1.4   DENIED    DENIED    CONTINUOUS  PASS
+2  copied                   1.1.4   ALLOWED   ALLOWED   DISRUPTED   PASS
+3  restored                 1.1.4   DENIED    DENIED    CONTINUOUS  PASS
+4  copied                   1.1.5   DENIED    DENIED    CONTINUOUS  PASS
+------------------------------------------------------------
+Root cause isolated: across controls 1-3 the ONLY variable is whether the RoleMapper
+survives onto the running config (same Milo 1.1.4 build, same application code every
+time). Control 3 (mapper explicitly restored after copy()) returning to DENIED, with
+nothing else changed from control 2, is the causal clincher.
+"Copying the server configuration silently erased its entire role map and made RBAC
+fail open."
+------------------------------------------------------------
+OVERALL: PASS
+============================================================

