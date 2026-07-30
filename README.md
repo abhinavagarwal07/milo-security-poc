@@ -13,28 +13,27 @@ and defensive testing only.
 
 ## Vulnerabilities
 
-| CVE | Component | Class (CWE) | Impact | CVSS v3.1 / v4.0 | Directory |
+| Finding | Component | Class (CWE) | Impact | CVSS v3.1 / v4.0 | Directory |
 |-----|-----------|-------------|--------|------------------|-----------|
-| the padding oracle | Username-token identity validation | RSA PKCS#1 v1.5 padding oracle (CWE-204) | **Password recovery + impersonation** | 7.4 / **9.1 Critical** | [`the padding oracle-username-token-padding-oracle/`](the padding oracle-username-token-padding-oracle/) |
-| the RoleMapper-drop defect | `OpcUaServerConfig.copy()` | `RoleMapper` dropped, RBAC fails open (CWE-862) | Authorization bypass | 8.6 / 8.8 | [`the RoleMapper-drop defect-serverconfig-copy-rolemapper/`](the RoleMapper-drop defect-serverconfig-copy-rolemapper/) |
-| the mixed-batch bypass | Call service | Mixed-batch authorization bypass (CWE-863) | Authorization bypass | 8.2 / 8.7 | [`the mixed-batch bypass-call-mixed-batch-authz-bypass/`](the mixed-batch bypass-call-mixed-batch-authz-bypass/) |
-| the pre-auth memory leak | UASC server transport | Pre-session direct-memory leak (CWE-401) | **Unauthenticated remote DoS** | 7.5 / 8.7 | [`the pre-auth memory leak-uasc-preauth-memory-leak/`](the pre-auth memory leak-uasc-preauth-memory-leak/) |
+| Username-token padding oracle | Username-token identity validation | RSA PKCS#1 v1.5 padding oracle (CWE-204) | **Password recovery + impersonation** | 7.4 / **9.1 Critical** | [`username-token-padding-oracle/`](username-token-padding-oracle/) |
+| `copy()` drops `RoleMapper` | `OpcUaServerConfig.copy()` | `RoleMapper` dropped, RBAC fails open (CWE-862) | Authorization bypass | 8.6 / 8.8 | [`serverconfig-copy-rolemapper/`](serverconfig-copy-rolemapper/) |
+| Call mixed-batch bypass | Call service | Mixed-batch authorization bypass (CWE-863) | Authorization bypass | 8.2 / 8.7 | [`call-mixed-batch-authz-bypass/`](call-mixed-batch-authz-bypass/) |
+| Pre-auth memory leak | UASC server transport | Pre-session direct-memory leak (CWE-401) | **Unauthenticated remote DoS** | 7.5 / 8.7 | [`uasc-preauth-memory-leak/`](uasc-preauth-memory-leak/) |
 
-**Affected:** the padding oracle and the pre-auth memory leak affect **0.6.0–0.6.16 and 1.0.0–1.1.4**; the RoleMapper-drop defect
-and the mixed-batch bypass affect **1.0.0–1.1.4** (1.x-only APIs). **All fixed in Eclipse Milo
+**Affected:** the padding oracle and the memory leak affect **0.6.0–0.6.16 and 1.0.0–1.1.4**; the
+`RoleMapper` drop and the mixed-batch bypass affect **1.0.0–1.1.4** (1.x-only APIs). **All fixed in Eclipse Milo
 [1.1.5](https://github.com/eclipse-milo/milo/releases/tag/v1.1.5)** (2026-07-16).
 
 Two more issues were fixed in the same release and are covered in the write-up but have no PoC here:
-the diagnostics disclosure (cross-session diagnostics disclosure) and the quota-exhaustion defect (monitored-item quota
-exhaustion / nested decode).
+a cross-session diagnostics disclosure, and monitored-item quota exhaustion / nested-decode DoS.
 
-## the padding oracle — captured token → plaintext password
+## Username-token padding oracle — captured token → plaintext password
 
 Milo's username-token decryption maps the distinct failure modes of an RSA PKCS#1 v1.5 unpad onto
 *different* OPC UA status codes: a validly-padded block with the wrong password returns a different code
 than a badly-padded block. That discrepancy is a **Bleichenbacher decryption oracle**.
 
-[`the padding oracle-username-token-padding-oracle/`](the padding oracle-username-token-padding-oracle/) is an
+[`username-token-padding-oracle/`](username-token-padding-oracle/) is an
 end-to-end attack across **five separate JVM processes** (server, victim, relay, attacker, verifier). A
 relay records the victim's raw TCP bytes — it does no OPC UA parsing at all — and the attacker decodes the
 UASC framing itself to recover the username, policy id, encrypted token, and the certificate the capture
@@ -56,7 +55,7 @@ the attacker has committed its answer to a file.
 > token**. That is exactly what the CVSS v4.0 `AT:P` and the v3.1 `AC:H` price in. Recovery is
 > probabilistic per run; query counts vary.
 
-## the pre-auth memory leak — unauthenticated, pre-session, process-killing DoS
+## Pre-authentication memory leak — unauthenticated, process-killing DoS
 
 The UASC server transport retains incomplete message chunks in pooled **direct (off-heap)** memory and
 releases them only on `exceptionCaught`, not on `channelInactive`. Because `SecurityPolicy.None` is
@@ -86,21 +85,21 @@ bytecode with only the Milo dependency changed:
 ```
 
 Each PoC's `run.sh` also runs the Milo 1.1.5 negative control; the exact flag differs per PoC (some run
-both sides in one invocation, others take `--fixed`). See the per-CVE README for the precise form.
+both sides in one invocation, others take `--fixed`). See each finding's README for the precise form.
 
 ## Requirements
 
 - **JDK 17** and **Maven 3.9+** (Milo 1.x targets Java 17)
-- **Docker** — only for the the pre-auth memory leak container-OOM scenario
-- **Python 3** — for the the pre-auth memory leak pure-socket attacker
+- **Docker** — only for the memory-leak container-OOM scenario
+- **Python 3** — for the memory-leak pure-socket attacker
 
 ## Safety
 
 **Run these in a disposable VM or an isolated lab.** These are working exploits, not illustrations:
 
-- the pre-auth memory leak will **kill the JVM** it is pointed at, and it exhausts a process-wide off-heap pool —
+- The memory-leak PoC will **kill the JVM** it is pointed at, and it exhausts a process-wide off-heap pool —
   never run it against anything you do not own.
-- the padding oracle recovers a real password from a server you control. Do not point it at third-party
+- The padding-oracle PoC recovers a real password from a server you control. Do not point it at third-party
   infrastructure; using it against systems you are not authorized to test is illegal in most
   jurisdictions.
 - The PoCs deliberately pin **vulnerable** Milo versions. Do not copy these poms into production.
@@ -108,7 +107,7 @@ both sides in one invocation, others take `--fixed`). See the per-CVE README for
 ## Mitigation
 
 Upgrade to **Eclipse Milo 1.1.5**. For the 0.6.x line there is no fixed 0.6 release — remediation is a
-0.6 → 1.x migration. Interim hardening is documented per-CVE in the individual READMEs and in the
+0.6 → 1.x migration. Interim hardening is documented per finding in the individual READMEs and in the
 write-up.
 
 ## Credit
