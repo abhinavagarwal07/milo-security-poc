@@ -1,6 +1,6 @@
 # Eclipse Milo ≤ 1.1.4 — OPC UA server vulnerability PoCs
 
-Proof-of-concept code for four server-side vulnerabilities in
+Proof-of-concept code for four of the six server-side vulnerabilities in
 [Eclipse Milo](https://github.com/eclipse-milo/milo), the open-source **OPC UA (IEC 62541)** client/server
 SDK for the JVM. All four are network-reachable against a Milo **server**; one is fully
 **pre-authentication**, and one recovers a legitimate user's **plaintext password** from a single captured

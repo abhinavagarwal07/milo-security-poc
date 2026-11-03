@@ -1,8 +1,8 @@
 # the padding oracle — RSA PKCS#1 v1.5 padding oracle in Eclipse Milo's `UserNameIdentityToken` decryption
 
-> **On identifiers.** A CVE ID has been reserved for this finding by the Eclipse Foundation (CNA) but
-> is not yet published. Per the CNA's terms a reserved identifier must not be used in public
-> communication before publication, so none is cited here; this file will be updated once it is public.
+> **On identifiers.** This finding is
+> [CVE-2026-60007](https://www.cve.org/CVERecord?id=CVE-2026-60007), assigned by the Eclipse
+> Foundation (CNA) and published on 4 August 2026. It is fixed in Eclipse Milo 1.1.5.
 **Component:** `opc-ua-sdk/sdk-server/src/main/java/org/eclipse/milo/opcua/sdk/server/identity/AbstractIdentityValidator.java`,
 `AbstractUsernameIdentityValidator.java`
 **Class:** CWE-204 Observable Response Discrepancy → Bleichenbacher chosen-ciphertext RSA decryption oracle
