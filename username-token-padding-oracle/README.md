@@ -217,12 +217,12 @@ comparison, and only after the attacker process has already exited.
   application-layer `ActivateSession` requests on an already-active session, so there is no
   additional artificial delay on this path in any environment.
 - **Scope beyond the primary PoC.** The same observable-discrepancy defect (distinct status codes
-  for valid vs. invalid RSA padding) exists for all of Milo's OAEP-based policies (`Basic256`,
-  `Basic256Sha256`, `Aes128_Sha256_RsaOaep`, `Aes256_Sha256_RsaPss`) — Manger's attack against OAEP
-  needs only ~4,096 adaptive queries in theory, independent of modulus size — but this PoC
-  demonstrates only the `Basic128Rsa15`/Bleichenbacher path to full, working password recovery and
-  impersonation. Classical Manger exploitability against the specific OAEP oracle shape here is a
-  real finding but is not separately demonstrated.
+  for valid vs. invalid RSA padding) is also present for all of Milo's OAEP-based policies
+  (`Basic256`, `Basic256Sha256`, `Aes128_Sha256_RsaOaep`, `Aes256_Sha256_RsaPss`). The observed
+  OAEP response difference does not establish Manger exploitability; this PoC demonstrates
+  password recovery only for `Basic128Rsa15`, via the Bleichenbacher path. The difference reveals
+  whether the full OAEP padding validated, not the leading-zero-byte property that Manger's attack
+  needs.
 
 ## Fix
 
