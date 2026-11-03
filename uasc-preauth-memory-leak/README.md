@@ -1,8 +1,8 @@
 # UASC pre-authentication direct-memory leak (unauthenticated remote DoS)
 
-> **On identifiers.** A CVE ID has been reserved for this finding by the Eclipse Foundation (CNA) but
-> is not yet published. Per the CNA's terms a reserved identifier must not be used in public
-> communication before publication, so none is cited here; this file will be updated once it is public.
+> **On identifiers.** This finding is
+> [CVE-2026-63252](https://www.cve.org/CVERecord?id=CVE-2026-63252), assigned by the Eclipse
+> Foundation (CNA) and published on 4 August 2026. It is fixed in Eclipse Milo 1.1.5.
 **Component:** `opc-ua-stack/transport/.../server/uasc/UascServerAsymmetricHandler.java`
 **Class:** CWE-401 Missing Release of Memory after Effective Lifetime
 **Impact:** Denial of service — unauthenticated remote attacker permanently leaks pooled

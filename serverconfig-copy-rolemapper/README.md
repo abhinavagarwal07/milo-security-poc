@@ -1,8 +1,8 @@
 # the RoleMapper-drop defect — `OpcUaServerConfig.copy()` drops the `RoleMapper`, RBAC fails open
 
-> **On identifiers.** A CVE ID has been reserved for this finding by the Eclipse Foundation (CNA) but
-> is not yet published. Per the CNA's terms a reserved identifier must not be used in public
-> communication before publication, so none is cited here; this file will be updated once it is public.
+> **On identifiers.** This finding is
+> [CVE-2026-58080](https://www.cve.org/CVERecord?id=CVE-2026-58080), assigned by the Eclipse
+> Foundation (CNA) and published on 4 August 2026. It is fixed in Eclipse Milo 1.1.5.
 **Component:** `opc-ua-sdk/sdk-server/src/main/java/org/eclipse/milo/opcua/sdk/server/OpcUaServerConfig.java`
 **Class:** CWE-862 Missing Authorization
 **Impact:** Authorization bypass — an identity that was never granted a privileged role can
